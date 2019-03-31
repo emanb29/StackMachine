@@ -4,7 +4,9 @@ import fastparse._, MultiLineWhitespace._
 object Parser {
   def PVarName[_: P]: P[VarName] = P(CharIn("a-zA-Z").rep(1).!.map(VarName.apply))
 
-  def PUnaryAppl[_: P]: P[Instruction] = P((PStore | PLoad) ~~ "(" ~/ PVarName ~ ")").map {
+  def PUnaryAppl[_: P]: P[Instruction] = P(PVarNameAppl | PIntAppl)
+
+  def PVarNameAppl[_: P]: P[Instruction] = P((PStore | PLoad) ~~ "(" ~/ PVarName ~ ")").map {
     case (
       fnt: (VarName => Instruction),
       varname: VarName
@@ -31,7 +33,7 @@ object Parser {
   def PPlus[_: P]: P[Instruction] = P(StringIn("PLUS")).map(_ => PLUS)
 
 
-  def PStatement[_: P]: P[Instruction] = P(PIntAppl | PUnaryAppl | PNullaryAppl)
+  def PStatement[_: P]: P[Instruction] = P(PUnaryAppl | PNullaryAppl)
 
   def PProgram[_: P]: P[Seq[Instruction]] = P(Start ~ PStatement.rep ~ End)
 

@@ -27,7 +27,7 @@ object Driver extends App {
       MINUS
       PLUS
       STORE(c)
-    """.stripMargin
+    """
   val demo01Parsed = Parser.doParse(demo01)
   val result = Interpreter.execute(demo01Parsed, initState0)
   println(result(VarName("a")))
