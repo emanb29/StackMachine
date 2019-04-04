@@ -4,13 +4,14 @@ import StackMachineLanguage._
 object Interpreter {
   /**
     * Execute a StackMachineLanguage program
-    * @param program A program represented in the StackMachineLanguage ADT
+    *
+    * @param program     A program represented in the StackMachineLanguage ADT
     * @param initialVars The initial state of the machine -- key => value sets
     * @return The final state of the machine -- key => value sets
     */
-  def execute(program: List[Instruction], initialVars: PartialFunction[VarName, Int]): PartialFunction[VarName, Int] = {
+  def execute(program: List[Instruction], initialVars: PartialFunction[VarName, Number]): PartialFunction[VarName, Number] = {
     @tailrec
-    def recurse(instructions: List[Instruction], stack: List[Int], vars: PartialFunction[VarName, Int]): PartialFunction[VarName, Int] = instructions match {
+    def recurse(instructions: List[Instruction], stack: List[Number], vars: PartialFunction[VarName, Number]): PartialFunction[VarName, Number] = instructions match {
       case instruction :: unexecuted => instruction match {
         case CONST(n) => recurse(unexecuted, n :: stack, vars)
         case LOAD(variable) if vars.isDefinedAt(variable) => recurse(unexecuted, vars(variable) :: stack, vars)
