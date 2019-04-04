@@ -8,23 +8,24 @@ object Parser {
 
   def PVarNameAppl[_: P]: P[Instruction] = P((PStore | PLoad) ~~ "(" ~/ PVarName ~ ")").map {
     case (
-      fnt: (VarName => Instruction),
+      fnt: (Id => Instruction),
       varname: VarName
       ) => fnt(varname)
   }
 
-  def PIntAppl[_: P]: P[Instruction] = P((PConst) ~~ "(" ~/ CharIn("0-9").rep.!.map(_.toInt) ~ ")").map {
-    case (
-      fnt: (Int => Instruction),
-      int: Int
-      ) => fnt(int)
-  }
+  def PIntAppl[_: P]: P[Instruction] = P((PConst) ~~ "(" ~/ CharIn("0-9").rep.!.map(_.toInt).map(Number.apply(_)) ~ ")")
+    .map {
+      case (
+        fnt: (Id => Instruction),
+        int: Number
+        ) => fnt(int)
+    }
 
   def PStore[_: P]: P[VarName => Instruction] = P(StringIn("STORE")).map(_ => STORE.apply(_))
 
   def PLoad[_: P]: P[VarName => Instruction] = P(StringIn("LOAD")).map(_ => LOAD.apply(_))
 
-  def PConst[_: P]: P[Int => Instruction] = P(StringIn("CONST")).map(_ => CONST.apply(_))
+  def PConst[_: P]: P[Number => Instruction] = P(StringIn("CONST")).map(_ => CONST.apply(_))
 
   def PNullaryAppl[_: P]: P[Instruction] = P(PMinus | PPlus)
 
